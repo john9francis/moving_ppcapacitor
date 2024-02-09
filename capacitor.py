@@ -8,7 +8,8 @@ from plate import Plate
 class Capacitor:
 
   def __init__(self, size_x: float, size_y: float) -> None:
-    self.world = np.zeros([size_x,size_y])
+    self.voltage_array = np.zeros([size_x,size_y])
+    self.field_array = np.zeros([size_x,size_y])
 
     # initialize stuff
     # note: plate list must be a list of Plate objects
@@ -31,80 +32,87 @@ class Capacitor:
 
 
   def add_plate_to_world(self, p:Plate):
-    self.world[range(p.pos_row, p.pos_row + p.height), range(p.pos_col, p.pos_col + p.width)] = p.charge
+    self.voltage_array[range(p.pos_row, p.pos_row + p.height), range(p.pos_col, p.pos_col + p.width)] = p.charge
 
+  def clear_plates(self):
+    self.plate_list.clear()
 
 
   def plot_capacitor(self):
-    plt.imshow(self.world, cmap='viridis')
+    plt.imshow(self.voltage_array, cmap='viridis')
     plt.colorbar()
     plt.show()
     pass
 
 
   def plot_capacitor3D(self):
-    x, y = np.meshgrid(np.arange(self.world.shape[1]), np.arange(self.world.shape[0]))
+    x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1, projection='3d')
-    ax.plot_surface(x, y, self.world, cmap=cm.coolwarm)
+    ax.plot_surface(x, y, self.voltage_array, cmap=cm.coolwarm)
     ax.view_init(elev = 40, azim = 70)
     ax.set_axis_off()
     plt.show()
     pass
 
 
+
   def relax(self):
     # relaxation method:
-    rows, columns =self.world.shape
+    rows, columns = self.voltage_array.shape
     difference = 1
     running = True
 
-    # add a safety feature incase it runs forever
-    timeout_loops = 100
+    # add a safety feature in case it runs forever
+    timeout_loops = 1000
     counter = 0
 
     while running:
       # we assume that it's accurate enough, and check later
       running = False
 
-      for i in range(rows):
-        for j in range(columns):
+      # Calculate averages using array slicing and avoid loops
+      avg = 0.25 * (
+        np.roll(self.voltage_array, 1, axis=0) +
+        np.roll(self.voltage_array, -1, axis=0) +
+        np.roll(self.voltage_array, 1, axis=1) +
+        np.roll(self.voltage_array, -1, axis=1)
+      )
 
-          # otherwise, calculate the avg here
-          try:
-            avg = .25 * (self.world[i-1,j] +self.world[i+1,j] +self.world[i,j-1] +self.world[i,j+1])
-          except IndexError:
-            pass
-          # difference of the old vs. new value
-          difference = abs(avg -self.world[i,j])
+      # Calculate the absolute differences in one go
+      differences = np.abs(avg - self.voltage_array)
 
-          # if ANY of the differences are too big,
-          # we are going to keep running.
-          if difference > 1e-4:
-            running = True
+      # If ANY of the differences are too big, we are going to keep running.
+      if np.any(differences > 1e-4):
+        running = True
 
+      # Reassign the entries to the average.
+      self.voltage_array = avg
 
-          # reassign this entry to the average.
-          self.world[i,j] = avg
+      # Reassign our edges and plates
 
-          # reassign our edges and plates
+      # Plates
+      for p in self.plate_list:
+        self.voltage_array[
+          p.pos_row : p.pos_row + p.height, p.pos_col : p.pos_col + p.width
+        ] = p.charge
 
-          # plates
-          for p in self.plate_list:
-            self.world[range(p.pos_row, p.pos_row + p.height), range(p.pos_col, p.pos_col + p.width)] = p.charge
+      # Edges
+      self.voltage_array[0, :] = 0
+      self.voltage_array[rows - 1, :] = 0
+      self.voltage_array[:, 0] = 0
+      self.voltage_array[:, columns - 1] = 0
 
-          # edges
-          self.world[0, :] = 0
-          self.world[rows-1, :] = 0
-          self.world[:, 0] = 0
-          self.world[:, columns-1] = 0
-
-
-      # for safety, break if it's running too long
+      # For safety, break if it's running too long
       counter += 1
       if counter > timeout_loops:
-        print(f"timed out. The minimum difference was {difference}. ")
+        print(f"Timed out. The minimum difference was {np.min(differences)}.")
         break
-      
-      
+
+
+
+  def create_electric_field(self):
+    '''
+    takes the gradient of every point in the voltage data
+    '''
