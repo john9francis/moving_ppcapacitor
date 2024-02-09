@@ -4,86 +4,20 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
+from plate import Plate
+from capacitor import Capacitor
 
-world = np.zeros([10, 10])
+world = Capacitor(10, 10)
 
-plate1_width = 1
-plate1_height = 6
-plate1_pos_row = 2
-plate1_pos_col = 2
-
-plate2_width = 1
-plate2_height = 6
-plate2_pos_row = 2
-plate2_pos_col = 7
-
-world[range(plate1_pos_row, plate1_pos_row + plate1_height), range(plate1_pos_col, plate1_pos_col + plate1_width)] = -1
-world[range(plate2_pos_row, plate2_pos_row + plate2_height), range(plate2_pos_col, plate2_pos_col + plate2_width)] = 1
+p1 = Plate(1, 6, 2, 2, -1)
+p2 = Plate(1, 6, 2, 7, 1)
 
 
-#print(world)
-# plot
-plt.imshow(world, cmap='viridis')
-plt.colorbar()
-plt.show()
+world.add_plate(p1)
+world.add_plate(p2)
 
+world.plot_capacitor()
 
-# relaxation method:
-rows, columns = world.shape
-difference = 1
-running = True
+world.relax()
 
-# add a safety feature incase it runs forever
-timeout_loops = 1000
-counter = 0
-
-while running:
-  # we assume that it's accurate enough, and check later
-  running = False
-
-  for i in range(rows):
-    for j in range(columns):
-        
-      # otherwise, calculate the avg here
-      try:
-        avg = .25 * (world[i-1,j] + world[i+1,j] + world[i,j-1] + world[i,j+1])
-      except IndexError:
-        pass
-      # difference of the old vs. new value
-      difference = abs(avg - world[i,j])
-
-      # if ANY of the differences are too big,
-      # we are going to keep running.
-      if difference > 1e-4:
-        running = True
-
-
-      # reassign this entry to the average.
-      world[i,j] = avg
-
-      # reassign our edges and capacitors
-      
-      # capacitors
-      world[range(plate1_pos_row, plate1_pos_row + plate1_height), range(plate1_pos_col, plate1_pos_col + plate1_width)] = -1
-      world[range(plate2_pos_row, plate2_pos_row + plate2_height), range(plate2_pos_col, plate2_pos_col + plate2_width)] = 1
-
-      # edges
-      world[0, :] = 0
-      world[rows-1, :] = 0
-      world[:, 0] = 0
-      world[:, columns-1] = 0
-
-
-  # for safety, break if it's running too long
-  counter += 1
-  if counter > timeout_loops:
-    print(f"timed out. The minimum difference was {difference}. ")
-    break
-
-
-
-#print(world)
-# plot again
-plt.imshow(world, cmap='viridis')
-plt.colorbar()
-plt.show()
+world.plot_capacitor()
