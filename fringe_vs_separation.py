@@ -13,6 +13,7 @@ def plot_fringe_vs_separation():
 
   fringe_field = []
   distance = []
+  distance_above_plates = 5
 
   for length in range(2, 10):
     world = Capacitor(60, 60)
@@ -30,21 +31,33 @@ def plot_fringe_vs_separation():
 
     world.relax()
 
+
     # now, calculate the fringe divided by total 
-    x_middle = round(world.get_width() / 2)
-    y_middle = round(world.get_height() / 2)
+    x_middle = world.get_width() // 2
+    y_middle = world.get_height() // 2
 
-    field_at_strongest = world.get_field_array()[y_middle, x_middle]
+    print(f"x: {x_middle}, y: {y_middle}")
+    strong_field_y = world.get_field_array()[0][y_middle, x_middle]
+    strong_field_x = world.get_field_array()[1][y_middle, x_middle]
 
-    field_at_fringe = world.get_field_array()[top_position - 2, x_middle]
+    fringe_field_y = world.get_field_array()[0][top_position - distance_above_plates, x_middle]
+    fringe_field_x = world.get_field_array()[1][top_position - distance_above_plates, x_middle]
 
-    fringe_field.append(field_at_fringe/field_at_strongest)
+    strong_field_mag = np.linalg.norm([strong_field_x, strong_field_y])
+    fringe_field_mag = np.linalg.norm([fringe_field_x, fringe_field_y])
+
+    fringe_field.append(fringe_field_mag/strong_field_mag)
     distance.append(length * 2)
 
     print(f"finished plotting distance: {distance[-1]}, field strength: {fringe_field[-1]}")
+    #world.plot_electric_field()
 
 
   # plot
   plt.plot(distance, fringe_field)
   plt.show()
 
+
+
+if __name__ == "__main__":
+  plot_fringe_vs_separation()
