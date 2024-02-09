@@ -61,7 +61,7 @@ class Capacitor:
     running = True
 
     # add a safety feature incase it runs forever
-    timeout_loops = 1000
+    timeout_loops = 100
     counter = 0
 
     while running:
