@@ -7,10 +7,10 @@ from matplotlib import pyplot as plt
 from plate import Plate
 from capacitor import Capacitor
 
-world = Capacitor(100, 100)
+world = Capacitor(60, 60)
 
-p1 = Plate(1, 60, 20, 20, -1)
-p2 = Plate(1, 60, 20, 80, 1)
+p1 = Plate(1, 40, 10, 25, -1)
+p2 = Plate(1, 40, 10, 35, 1)
 
 
 world.add_plate(p1)

@@ -63,7 +63,7 @@ class Capacitor:
     self.create_electric_field()
 
     x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
-    dx, dy = self.field_array
+    dy, dx = self.field_array
 
     fig = plt.figure()
     ax = fig.add_subplot()
