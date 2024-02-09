@@ -11,3 +11,10 @@ class Plate:
   # to do: 
   # add different constructors to calculate position in different ways
   # e.g. distance from center
+
+  def set_position_from_middle(self, width, distance_from_middle, to_the_left=True):
+    if to_the_left:
+      self.pos_col = round(width / 2 - distance_from_middle)
+    else:
+      self.pos_col = round(width / 2 + distance_from_middle)
+    pass

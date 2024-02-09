@@ -16,6 +16,14 @@ class Capacitor:
     self.plate_list = []
 
 
+  def get_width(self):
+    rows, columns = self.voltage_array.shape
+    return columns
+
+  def get_height(self):
+    rows, columns = self.voltage_array.shape
+    return rows
+
   def add_plate(self, p:Plate):
     self.plate_list.append(p)
 
@@ -75,7 +83,6 @@ class Capacitor:
   def relax(self):
     # relaxation method:
     rows, columns = self.voltage_array.shape
-    difference = 1
     running = True
 
     # add a safety feature in case it runs forever
