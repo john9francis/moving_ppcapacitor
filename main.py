@@ -7,22 +7,23 @@ from matplotlib import pyplot as plt
 from plate import Plate
 from capacitor import Capacitor
 
-world = Capacitor(60, 60)
+for length in range(0, 25, 10):
+  world = Capacitor(60, 60)
 
-p1 = Plate(1, 40, 10, 25, -1)
-p2 = Plate(1, 40, 10, 35, 1)
+  p1 = Plate(1, 40, 10, 25, -1)
+  p2 = Plate(1, 40, 10, 35, 1)
 
-p1.set_position_from_middle(world.get_width(), 10, True)
-p2.set_position_from_middle(world.get_width(), 10, False)
+  p1.set_position_from_middle(world.get_width(), length, True)
+  p2.set_position_from_middle(world.get_width(), length, False)
 
-world.add_plate(p1)
-world.add_plate(p2)
+  world.add_plate(p1)
+  world.add_plate(p2)
 
 
-world.relax()
+  world.relax()
 
-world.plot_voltage()
-world.plot_electric_field()
+  world.plot_voltage3D()
+  world.plot_electric_field()
 
 
 
