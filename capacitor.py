@@ -38,14 +38,14 @@ class Capacitor:
     self.plate_list.clear()
 
 
-  def plot_capacitor(self):
+  def plot_voltage(self):
     plt.imshow(self.voltage_array, cmap='viridis')
     plt.colorbar()
     plt.show()
     pass
 
 
-  def plot_capacitor3D(self):
+  def plot_voltage3D(self):
     x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
 
     fig = plt.figure()
@@ -55,6 +55,16 @@ class Capacitor:
     ax.set_axis_off()
     plt.show()
     pass
+
+  def plot_electric_field(self):
+    '''Plots a quiver plot'''
+    x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
+    dx, dy = np.meshgrid(np.arange(self.field_array.shape[1]), np.arange(self.field_array.shape[0]))
+    
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    ax.quiver(x, y, dx, dy)
+    plt.show()
 
 
 
@@ -116,3 +126,5 @@ class Capacitor:
     '''
     takes the gradient of every point in the voltage data
     '''
+    self.field_array = np.gradient(self.voltage_array)
+

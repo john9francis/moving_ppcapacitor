@@ -16,8 +16,8 @@ p2 = Plate(1, 60, 20, 80, 1)
 world.add_plate(p1)
 world.add_plate(p2)
 
-world.plot_capacitor()
 
 world.relax()
 
-world.plot_capacitor()
+world.plot_voltage()
+world.plot_electric_field()
