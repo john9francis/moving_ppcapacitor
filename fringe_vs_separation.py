@@ -11,7 +11,8 @@ def plot_fringe_vs_separation():
   between plates
   '''
 
-  fringe_field = []
+  fringe_field_relative = []
+  fringe_field_absolute = []
   distance = []
   distance_above_plates = 5
 
@@ -46,15 +47,26 @@ def plot_fringe_vs_separation():
     strong_field_mag = np.linalg.norm([strong_field_x, strong_field_y])
     fringe_field_mag = np.linalg.norm([fringe_field_x, fringe_field_y])
 
-    fringe_field.append(fringe_field_mag/strong_field_mag)
+    fringe_field_relative.append(fringe_field_mag/strong_field_mag)
+    fringe_field_absolute.append(fringe_field_mag)
     distance.append(length * 2)
 
-    print(f"finished plotting distance: {distance[-1]}, field strength: {fringe_field[-1]}")
-    #world.plot_electric_field()
 
 
   # plot
-  plt.plot(distance, fringe_field)
+  fig = plt.figure(figsize=(10,4))
+
+  ax1 = fig.add_subplot(1, 2, 1)
+  ax1.set_title("Absolute fringe field magnitude")
+  ax1.set_xlabel("distance")
+  ax1.set_ylabel("field strength")
+  ax1.plot(distance, fringe_field_absolute)
+
+  ax2 = fig.add_subplot(1, 2, 2)
+  ax2.set_title("Relative fringe field magnitude")
+  ax2.set_xlabel("distance")
+  ax2.set_ylabel("field strength / total field strength")
+  ax2.plot(distance, fringe_field_relative)
   plt.show()
 
 
