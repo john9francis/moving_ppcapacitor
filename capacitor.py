@@ -29,6 +29,8 @@ class Capacitor:
 
     self.add_plate_to_world(p)
 
+  def get_field_array(self):
+    return self.field_array
 
 
   def create_and_add_plate(self, width, height, pos_row, pos_col, charge):
@@ -44,6 +46,12 @@ class Capacitor:
 
   def clear_plates(self):
     self.plate_list.clear()
+
+  def reset(self):
+    self.voltage_array = np.zeros_like(self.voltage_array)
+    self.field_array = np.zeros_like(self.field_array)
+    self.plate_list = []
+
 
 
   def plot_voltage(self):
@@ -66,9 +74,6 @@ class Capacitor:
 
   def plot_electric_field(self):
     '''Plots a quiver plot'''
-
-    # make sure the electric field data is here
-    self.create_electric_field()
 
     x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
     dy, dx = self.field_array
@@ -130,6 +135,10 @@ class Capacitor:
       if counter > timeout_loops:
         print(f"Timed out. The minimum difference was {np.min(differences)}.")
         break
+
+
+    # finally, create electric field from the new voltage stuff
+    self.create_electric_field()
 
 
 
