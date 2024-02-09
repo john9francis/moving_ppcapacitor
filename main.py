@@ -21,3 +21,8 @@ world.relax()
 
 world.plot_voltage()
 world.plot_electric_field()
+
+
+
+# todo: 
+# plot electric field fringe/middle vs. plate distance
