@@ -58,9 +58,13 @@ class Capacitor:
 
   def plot_electric_field(self):
     '''Plots a quiver plot'''
+
+    # make sure the electric field data is here
+    self.create_electric_field()
+
     x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
-    dx, dy = np.meshgrid(np.arange(self.field_array.shape[1]), np.arange(self.field_array.shape[0]))
-    
+    dx, dy = self.field_array
+
     fig = plt.figure()
     ax = fig.add_subplot()
     ax.quiver(x, y, dx, dy)
@@ -127,4 +131,3 @@ class Capacitor:
     takes the gradient of every point in the voltage data
     '''
     self.field_array = np.gradient(self.voltage_array)
-
