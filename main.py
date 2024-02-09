@@ -16,8 +16,8 @@ p2 = Plate(1, 6, 2, 7, 1)
 world.add_plate(p1)
 world.add_plate(p2)
 
-world.plot_capacitor()
+world.plot_capacitor3D()
 
 world.relax()
 
-world.plot_capacitor()
+world.plot_capacitor3D()

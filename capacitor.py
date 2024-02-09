@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import cm
 
 # my own classes
 from plate import Plate
@@ -37,6 +38,18 @@ class Capacitor:
   def plot_capacitor(self):
     plt.imshow(self.world, cmap='viridis')
     plt.colorbar()
+    plt.show()
+    pass
+
+
+  def plot_capacitor3D(self):
+    x, y = np.meshgrid(np.arange(self.world.shape[1]), np.arange(self.world.shape[0]))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    ax.plot_surface(x, y, self.world, cmap=cm.coolwarm)
+    ax.view_init(elev = 40, azim = 70)
+    ax.set_axis_off()
     plt.show()
     pass
 
