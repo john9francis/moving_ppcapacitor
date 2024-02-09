@@ -6,3 +6,8 @@ class Plate:
     self.pos_col = pos_col
     self.charge = charge
     pass
+
+
+  # to do: 
+  # add different constructors to calculate position in different ways
+  # e.g. distance from center
