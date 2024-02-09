@@ -37,7 +37,6 @@ def plot_fringe_vs_separation():
     x_middle = world.get_width() // 2
     y_middle = world.get_height() // 2
 
-    print(f"x: {x_middle}, y: {y_middle}")
     strong_field_y = world.get_field_array()[0][y_middle, x_middle]
     strong_field_x = world.get_field_array()[1][y_middle, x_middle]
 
