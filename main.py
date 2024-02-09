@@ -33,8 +33,11 @@ rows, columns = world.shape
 difference = 1
 running = True
 
-#while running:
-for i in range(10):
+# add a safety feature incase it runs forever
+timeout_loops = 1000
+counter = 0
+
+while running:
   # we assume that it's accurate enough, and check later
   running = False
 
@@ -69,6 +72,13 @@ for i in range(10):
       world[rows-1, :] = 0
       world[:, 0] = 0
       world[:, columns-1] = 0
+
+
+  # for safety, break if it's running too long
+  counter += 1
+  if counter > timeout_loops:
+    print(f"timed out. The minimum difference was {difference}. ")
+    break
 
 
 
