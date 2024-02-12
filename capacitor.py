@@ -165,11 +165,11 @@ class Capacitor:
 
 
     # finally, create electric field from the new voltage stuff
-    self.create_electric_field()
+    self.__create_electric_field()
 
 
 
-  def create_electric_field(self):
+  def __create_electric_field(self):
     '''
     Calculates the electric field based on the voltage.
     the electric field is the negative gradient of the voltage.
@@ -177,6 +177,6 @@ class Capacitor:
     '''
     # note: the np.gradient function returns the y gradient before
     # the x one. For my field array I switched them so x is first. 
-    
+
     dy, dx = np.gradient(self.voltage_array)
     self.field_array = -dx, -dy
