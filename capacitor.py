@@ -113,13 +113,18 @@ class Capacitor:
 
 
   def relax(self):
-    # relaxation method:
+    '''
+    Performs a relaxation method to calculate voltage at each point in the capacitor.
+    '''
+    # Get shape, we will use this when enforcing boundry conditions
     rows, columns = self.voltage_array.shape
-    running = True
 
     # add a safety feature in case it runs forever
     timeout_loops = 1000
     counter = 0
+
+    # Start our relaxation loop
+    running = True
 
     while running:
       # we assume that it's accurate enough, and check later
@@ -143,13 +148,11 @@ class Capacitor:
       # Reassign the entries to the average.
       self.voltage_array = avg
 
-      # Reassign our edges and plates
+      # Enforce voltages on our edges and plates
 
       # Plates
       for p in self.plate_list:
-        self.voltage_array[
-          p.pos_row : p.pos_row + p.height, p.pos_col : p.pos_col + p.width
-        ] = p.charge
+        self.__add_plate_to_world(p)
 
       # Edges
       self.voltage_array[0, :] = 0
@@ -164,7 +167,7 @@ class Capacitor:
         break
 
 
-    # finally, create electric field from the new voltage stuff
+    # finally, create electric field from the new voltages
     self.__create_electric_field()
 
 
