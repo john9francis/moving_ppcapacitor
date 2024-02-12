@@ -6,13 +6,19 @@ from matplotlib import cm
 from plate import Plate
 
 class Capacitor:
-
+  '''
+  Creates a grid to measure voltages and electric fields.
+  Plate objects with their own voltages can be added.
+  Calculates voltage over capacitor using relaxation method
+  and the "relax()" function. 
+  '''
   def __init__(self, size_x: float, size_y: float) -> None:
+    # initialize voltage and electric field arrays of the correct size
     self.voltage_array = np.zeros([size_x,size_y])
     self.field_array = np.zeros([size_x,size_y])
 
-    # initialize stuff
-    # note: plate list must be a list of Plate objects
+    # a list for the plates. These will not be relaxed during the 
+    # relaxation method.
     self.plate_list = []
 
 
@@ -26,26 +32,36 @@ class Capacitor:
 
   def add_plate(self, p:Plate):
     self.plate_list.append(p)
+    self.__add_plate_to_world(p)
 
-    self.add_plate_to_world(p)
 
   def get_field_array(self):
     return self.field_array
 
 
   def create_and_add_plate(self, width, height, pos_row, pos_col, charge):
+    '''
+    Create a plate object with it's width, height, position and charge
+    and add it to capacitor
+    '''
     p = Plate(width, height, pos_row, pos_col, charge)
     self.plate_list.append(p)
 
-    self.add_plate_to_world(p)
+    self.__add_plate_to_world(p)
 
 
 
-  def add_plate_to_world(self, p:Plate):
+  def __add_plate_to_world(self, p:Plate):
+    '''
+    Private function that takes the plate object and set's the correct
+    grid spaces in the capacitor to the voltages of the plate
+    '''
     self.voltage_array[range(p.pos_row, p.pos_row + p.height), range(p.pos_col, p.pos_col + p.width)] = p.charge
+
 
   def clear_plates(self):
     self.plate_list.clear()
+
 
   def reset(self):
     self.voltage_array = np.zeros_like(self.voltage_array)
@@ -55,6 +71,9 @@ class Capacitor:
 
 
   def plot_voltage(self):
+    '''
+    Plots the capacitor's voltage as a 2D heatmap
+    '''
     plt.imshow(self.voltage_array, cmap='viridis')
     plt.colorbar()
     plt.show()
@@ -62,6 +81,9 @@ class Capacitor:
 
 
   def plot_voltage3D(self):
+    '''
+    Plots capacitor's voltage in a 3D representation
+    '''
     x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
 
     fig = plt.figure()
@@ -73,15 +95,20 @@ class Capacitor:
     pass
 
   def plot_electric_field(self):
-    '''Plots a quiver plot'''
+    '''Plots a vector plot of the electric field'''
 
+    # Get a basic surface of the correct size to plot
     x, y = np.meshgrid(np.arange(self.voltage_array.shape[1]), np.arange(self.voltage_array.shape[0]))
-    dy, dx = self.field_array
+    
+    # Get the electric field at each point from the field_array
+    dx, dy = self.field_array
 
+    # quiver plot
     fig = plt.figure()
     ax = fig.add_subplot()
     ax.quiver(x, y, dx, dy)
     plt.show()
+
 
 
 
@@ -144,6 +171,12 @@ class Capacitor:
 
   def create_electric_field(self):
     '''
-    takes the gradient of every point in the voltage data
+    Calculates the electric field based on the voltage.
+    the electric field is the negative gradient of the voltage.
+    saves this data to the self.field array.
     '''
-    self.field_array = np.gradient(self.voltage_array)
+    # note: the np.gradient function returns the y gradient before
+    # the x one. For my field array I switched them so x is first. 
+    
+    dy, dx = np.gradient(self.voltage_array)
+    self.field_array = -dx, -dy
